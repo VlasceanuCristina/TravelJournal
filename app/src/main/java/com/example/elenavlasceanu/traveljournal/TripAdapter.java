@@ -36,35 +36,42 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
         final Trip currentTrip = mTrips.get(i);
         tripViewHolder.mTextViewName.setText(currentTrip.getmName());
         tripViewHolder.mTextViewLocation.setText(currentTrip.getmLocation());
-        tripViewHolder.mTextViewPrice.setText(currentTrip.getmPrice()+ " RON");
+        tripViewHolder.mTextViewPrice.setText(currentTrip.getmPrice()+ " EUR");
         Boolean isFavourite=currentTrip.getmBookmark();
         Picasso.get().load(currentTrip.getmPicture())
                 .into(tripViewHolder.mImageView);
 
+        tripViewHolder.mImageButtonBookmark.setOnClickListener(new View.OnClickListener() {
+                                                                   @Override
+                                                                   public void onClick(View v) {
+                                                                       uploadTrip(currentTrip);
+                                                                       Toast.makeText(mContext, "Trip added to favourite",
+                                                                               Toast.LENGTH_SHORT).show();
+                                                                       tripViewHolder.mImageButtonBookmark.setBackgroundResource(R.drawable.ic_bookmark_plin);
+                                                                   }
+                                                               });
+                tripViewHolder.mlinearLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-        tripViewHolder.mlinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               uploadTrip(currentTrip);
-                Toast.makeText(mContext,"Trip added to favourite" ,
-                        Toast.LENGTH_SHORT).show();
-                tripViewHolder.mImageButtonBookmark.setBackgroundResource(R.drawable.ic_bookmark_plin);
+                        Intent intent = new Intent(mContext, DisplayDetailsTrip.class);
+                        intent.putExtra("name", currentTrip.getmName());
+                        intent.putExtra("location", currentTrip.getmLocation());
+                        intent.putExtra("picture", currentTrip.getmPicture());
+                        intent.putExtra("price", currentTrip.getmPrice());
+                        intent.putExtra("bookmark", currentTrip.getmBookmark());
+                        mContext.startActivity(intent);
 
-            }
-        });
+                    }
+                });
 
         tripViewHolder.mlinearLayout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Intent intent= new Intent(mContext,DisplayDetailsTrip.class);
-                intent.putExtra("name",currentTrip.getmName());
-                intent.putExtra("location",currentTrip.getmLocation());
-                intent.putExtra("picture",currentTrip.getmPicture());
-                intent.putExtra("price",currentTrip.getmPrice());
-                intent.putExtra("bookmark",currentTrip.getmBookmark());
-               mContext.startActivity(intent);
-                Toast.makeText(mContext,"Long click" ,
-                        Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(mContext,"Edit trip" , Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(mContext,Manage_Trip.class);
+                mContext.startActivity(intent);
                 return false;
             }
         });

@@ -45,7 +45,7 @@
         <activity android:name=".DestionationRecyclerViewActivity" />
         <activity android:name=".Manage_Trip" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".TripRecyclerViewActivity" />
+        <activity android:name=".DisplayDetailsTrip" />
         <activity android:name=".BaseActivity"></activity>
     </application>
 
