@@ -2,6 +2,7 @@ package com.example.elenavlasceanu.traveljournal;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -12,6 +13,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.core.Constants;
 
 public class NavigationDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -24,32 +32,56 @@ private TextView mEmail;
         setContentView(R.layout.activity_navigation_drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
-        //mEmail.setText();
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        //initView();
+        View headerView = navigationView.getHeaderView(0);
+         mUsername = (TextView) headerView.findViewById(R.id.username_google);
+         mEmail=(TextView) headerView.findViewById(R.id.email_google);
+        initView();
+
     }
-   private void initView(){
-       mEmail=(TextView) findViewById(R.id.textView);
-       mUsername=(TextView) findViewById(R.id.username);
-       mUsername.setText(getIntent().getStringExtra("Nume"));
+   private void initView() {
+       FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
+           @Override
+           public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+               if (firebaseAuth.getCurrentUser() == null) {
+                   Toast.makeText(NavigationDrawerActivity.this, "User not exist", Toast.LENGTH_SHORT).show();
+               } else {
+                   Toast.makeText(NavigationDrawerActivity.this, "User exist", Toast.LENGTH_SHORT).show();
+               }
+           }
+       };
+
+      /*FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+       if(user!=null) {
+           String email = user.getEmail();
+           String username = user.getDisplayName();
+           Toast.makeText(NavigationDrawerActivity.this,"hei",Toast.LENGTH_SHORT).show();
+           mUsername.setText(username);
+           mEmail.setText(email);
+       }*/
+
+       FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+       if (user != null) {
+           for (UserInfo profile : user.getProviderData()) {
+               // Id of the provider (ex: google.com)
+               String providerId = profile.getProviderId();
+
+               // UID specific to the provider
+               String uid = profile.getUid();
+
+               // Name, email address, and profile photo Url
+               String name = profile.getDisplayName();
+               String email = profile.getEmail();
+             mUsername.setText(name);
+             mEmail.setText(email);
+           }
+       }
    }
     @Override
     public void onBackPressed() {
@@ -118,5 +150,6 @@ private TextView mEmail;
         Intent intent = new Intent(this, Manage_Trip.class);
         startActivity(intent);
     }
+
 
 }

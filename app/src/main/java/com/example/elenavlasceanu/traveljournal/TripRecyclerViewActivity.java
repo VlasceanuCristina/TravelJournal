@@ -61,6 +61,7 @@ public class TripRecyclerViewActivity extends Fragment {
                             String picture=document.getString("mPicture");
                             double price=document.getDouble("mPrice");
                             Trip trip=new Trip(nume,location,picture,price,true);
+                            trip.setTripFirebaseId(document.getId());
                             mTrips.add(trip);
 
 

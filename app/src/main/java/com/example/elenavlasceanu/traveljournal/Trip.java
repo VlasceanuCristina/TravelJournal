@@ -5,6 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import com.google.firebase.firestore.Exclude;
+
 @Entity(tableName = "Trips")
 public class Trip {
     @ColumnInfo(name="name")
@@ -60,14 +62,24 @@ public class Trip {
    @PrimaryKey(autoGenerate = true)
    @ColumnInfo(name ="id")
    public int tripId;
-
-    public int getTripId() {
+    public  int getTripId() {
         return tripId;
     }
 
     public void setTripId(@NonNull int tripId) {
         this.tripId = tripId;
     }
+
+
+    public String getTripFirebaseId() {
+        return tripFirebaseId;
+    }
+
+    public void setTripFirebaseId(String tripFirebaseId) {
+        this.tripFirebaseId = tripFirebaseId;
+    }
+    @Exclude
+    private String tripFirebaseId;
 
 
     public Trip(String name, String location,String picture, double price,Boolean bookmark) {

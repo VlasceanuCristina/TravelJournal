@@ -37,4 +37,5 @@
     <string name="single_click">Add to favourite</string>
     <string name="button_item">Travel added</string>
     <string name="long_click">Edit trip</string>
+    <string name="menu">GO TO MENU</string>
 </resources>

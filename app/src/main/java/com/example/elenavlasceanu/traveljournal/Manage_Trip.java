@@ -420,6 +420,7 @@ public class Manage_Trip extends AppCompatActivity {
                                         Trip upload = new Trip(mNume.getText().toString(), mDestination.getText().toString(), b, mPrice.getProgress(), true);
 
                                         FirebaseFirestore.getInstance().collection("trips").add(upload);
+
                                     }
                                 });
                                 Toast.makeText(Manage_Trip.this, "Upload succesful", Toast.LENGTH_SHORT).show();

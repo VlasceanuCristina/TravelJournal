@@ -19,6 +19,13 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 //import com.google.auth.oauth2.GoogleCredentials;
 
@@ -29,6 +36,7 @@ public class LoginFirebaseActivity extends AppCompatActivity implements GoogleAp
     GoogleApiClient mGoogleApiClient;
     private static final String TAG = "SigInActivity";
     private static final int RC_SIGN_IN = 9001;
+    private FirebaseAuth mAuth;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +53,7 @@ public class LoginFirebaseActivity extends AppCompatActivity implements GoogleAp
         signInButton.setOnClickListener(this);
         signOutButton = (Button) findViewById(R.id.signOutButton);
         signOutButton.setOnClickListener(this);
+        mAuth = FirebaseAuth.getInstance();
     }
 
     public void onClick(View v) {
@@ -69,6 +78,7 @@ public class LoginFirebaseActivity extends AppCompatActivity implements GoogleAp
         if (requstCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
+           //firebaseAuthWithGoogle(result);
         }
 
     }
@@ -79,7 +89,7 @@ public class LoginFirebaseActivity extends AppCompatActivity implements GoogleAp
             GoogleSignInAccount acct = result.getSignInAccount();
             statusTextView.setText("Hello, " + acct.getDisplayName());
             Intent intent = new Intent(this, NavigationDrawerActivity.class);
-            intent.putExtra("Nume",acct.getDisplayName());
+            //intent.putExtra("Nume",acct.getDisplayName());
             startActivity(intent);
         }
     }
@@ -96,16 +106,21 @@ public class LoginFirebaseActivity extends AppCompatActivity implements GoogleAp
             }
         });
     }
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
-       /* FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
-
-        // Get a reference to the restaurants collection
-        CollectionReference trips = mFirestore.collection("trips");
-
-            // Get a random Restaurant POJO
-            Trip trip = new Trip("First trip", "Romania", "picture", 200, true);
-
-            // Add a new document to the restaurants collection
-            //
-    trips.add(trip);*/
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            //updateUI(user);
+                        }
+                    }
+                });
+    }
 }

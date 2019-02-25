@@ -9,15 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
-public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
+public class TripAdapter extends RecyclerView.Adapter<TripViewHolder>{
     private List<Trip> mTrips;
     private Context mContext;
-
+    public static AppDatabase appDatabase;
     public  TripAdapter(List<Trip> trips, Context context) {
         mTrips = trips;
         mContext = context;
@@ -48,6 +49,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
                                                                        Toast.makeText(mContext, "Trip added to favourite",
                                                                                Toast.LENGTH_SHORT).show();
                                                                        tripViewHolder.mImageButtonBookmark.setBackgroundResource(R.drawable.ic_bookmark_plin);
+                                                                       insertTripDatabaseLocal(currentTrip);
                                                                    }
                                                                });
                 tripViewHolder.mlinearLayout.setOnClickListener(new View.OnClickListener() {
@@ -70,7 +72,14 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
             public boolean onLongClick(View v) {
 
                 Toast.makeText(mContext,"Edit trip" , Toast.LENGTH_SHORT).show();
-                Intent intent=new Intent(mContext,Manage_Trip.class);
+                //Trip trip=new Trip(currentTrip.getmName(),currentTrip.getmLocation(),currentTrip.getmPicture(),currentTrip.getmPrice(),currentTrip.getmBookmark());
+                Intent intent=new Intent(mContext,UpdateTrip.class);
+                intent.putExtra("name", currentTrip.getmName());
+                intent.putExtra("location", currentTrip.getmLocation());
+                intent.putExtra("picture", currentTrip.getmPicture());
+                intent.putExtra("price", currentTrip.getmPrice());
+                intent.putExtra("bookmark", currentTrip.getmBookmark());
+                intent.putExtra("tripFirebaseID",currentTrip.getTripFirebaseId());
                 mContext.startActivity(intent);
                 return false;
             }
@@ -84,5 +93,9 @@ public class TripAdapter extends RecyclerView.Adapter<TripViewHolder> {
     }
     public void uploadTrip(Trip upload){
         FirebaseFirestore.getInstance().collection("favourite").add(upload);
+    }
+    public void insertTripDatabaseLocal(Trip trip){
+        appDatabase.getAppDatabase(mContext);
+       // appDatabase.
     }
 }
