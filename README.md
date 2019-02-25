@@ -8,6 +8,6 @@ FavouriteFragment- recyclerView for favourite trips;
 DisplayDetailsTrip - activity for display details about trip; 
 UpdateTrip- activity launched when press long click; 
 AppDatabase, TripDao- for Room Database; 
-Manage_Trip- activity for save data about a trip;
+Manage_Trip- activity for save informations about a trip;
 
 Other class or activities from project are not useful
